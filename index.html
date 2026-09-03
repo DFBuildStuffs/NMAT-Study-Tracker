@@ -137,7 +137,7 @@
                 </span>
                 <span>Food for the Soul</span>
             </button>
-            <button onclick="sendFeedback(); closeSidebar();" class="w-full flex items-center space-x-3 p-3 rounded-2xl hover:bg-blush text-textdark font-medium transition-all group">
+            <button onclick="navigateTo('feedback'); closeSidebar();" class="w-full flex items-center space-x-3 p-3 rounded-2xl hover:bg-blush text-textdark font-medium transition-all group">
                 <span class="w-10 h-10 rounded-xl bg-blush group-hover:bg-softpink group-hover:text-white text-deeppink flex items-center justify-center transition-colors">
                     <i class="fa-solid fa-paper-plane"></i>
                 </span>
@@ -490,6 +490,25 @@
             </div>
         </section>
 
+        <!-- 7. FEEDBACK VIEW -->
+        <section id="view-feedback" class="view-section hidden space-y-6">
+            <div class="bg-cardbg p-6 sm:p-10 rounded-3xl border border-softpink/40 cute-shadow text-center max-w-xl mx-auto space-y-6">
+                <div class="w-16 h-16 rounded-2xl bg-blush text-deeppink flex items-center justify-center text-2xl mx-auto shadow-sm">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-deeppink mb-2">We Value Your Feedback 🌸</h2>
+                    <p class="text-sm text-textdark/80 leading-relaxed">
+                        We would love to hear your thoughts, suggestions, or bug reports to make this study tracker even better for your NMAT journey. Please reach out to us at:
+                    </p>
+                </div>
+                <div class="bg-blush/50 p-6 rounded-2xl border border-softpink/60">
+                    <p class="text-xs font-bold text-textdark/70 uppercase tracking-wider mb-1">Developer Contact Email</p>
+                    <p class="text-lg sm:text-xl font-extrabold text-deeppink select-all">nicholasfreed508@gmail.com</p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Custom Modal for Alerts/Messages -->
@@ -696,13 +715,6 @@
         sidebarClose.addEventListener('click', closeSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // Feedback item handler (Redirects & auto-sends to Gmail)
-        function sendFeedback() {
-            const subject = encodeURIComponent("Feedback for NMAT Blossom Tracker - Dr. " + (appState.userName || "User"));
-            const body = encodeURIComponent("Hello,\n\nI would like to share the following feedback regarding the NMAT Blossom Tracker app:\n\n[Write your feedback here]");
-            window.location.href = `mailto:nicholasfreed508@gmail.com?subject=${subject}&body=${body}`;
-        }
-
         // Custom Modal Controller
         function showModal(title, message, iconClass = "fa-solid fa-circle-check") {
             document.getElementById('modal-title').innerText = title;
@@ -808,7 +820,7 @@
             
             let initialRemSecs = totalSecs;
             if (chosenStudyModeType === 'pomodoro') {
-                initialRemSecs = Math.min(50 * 60, totalSecs); // 50 mins study interval first
+                initialRemSecs = Math.min(50 * 60, totalSecs);
             }
 
             appState.currentSession = {
@@ -834,9 +846,9 @@
             let partLabel = chosenMockPart;
 
             if (chosenMockPart === 'Part 1: Mental Ability') {
-                durationSecs = (2 * 3600 + 15 * 60); // 2 hrs 15 mins
+                durationSecs = (2 * 3600 + 15 * 60);
             } else if (chosenMockPart === 'Part 2: Academic Proficiency') {
-                durationSecs = (1 * 3600 + 30 * 60); // 1 hr 30 mins
+                durationSecs = (1 * 3600 + 30 * 60);
             } else {
                 const customMins = parseInt(document.getElementById('custom-minutes-input').value) || 60;
                 durationSecs = customMins * 60;
@@ -889,11 +901,10 @@
                         session.elapsedStudySeconds = (session.elapsedStudySeconds || 0) + 1;
                     }
 
-                    // Handle Pomodoro alternation for Study Timer (50 min study / 10 min break)
                     if (session.type === 'study' && session.timerModeType === 'pomodoro' && session.remainingSeconds === 0) {
                         if (session.isStudyPhase) {
                             session.isStudyPhase = false;
-                            session.remainingSeconds = 10 * 60; // 10 min break
+                            session.remainingSeconds = 10 * 60;
                             document.getElementById('timer-subtitle').innerText = 'Break Phase: 10 Minutes Rest ☕';
                             showModal('Time for a Break!', 'Great job focusing for 50 minutes! Take a 10-minute stretch.', 'fa-solid fa-mug-hot');
                         } else {
@@ -904,7 +915,6 @@
                         }
                     }
 
-                    // Check if entire session completed
                     if (session.type === 'study' && session.elapsedStudySeconds >= session.selectedHours * 3600) {
                         completeActiveTimer();
                         return;
@@ -1062,6 +1072,7 @@
             let p2Total = 0, p2Count = 0;
             let overallTotalPercent = 0;
 
+            appState.mockScores.exports = appState.mockScores || [];
             appState.mockScores.forEach((score) => {
                 overallTotalPercent += parseFloat(score.percentage);
                 if (score.part.includes("Part 1")) {
@@ -1073,7 +1084,6 @@
                 }
             });
 
-            // Update graphs
             const p1Avg = p1Count > 0 ? (p1Total / p1Count).toFixed(1) : 0;
             const p2Avg = p2Count > 0 ? (p2Total / p2Count).toFixed(1) : 0;
 
@@ -1124,7 +1134,7 @@
             renderMockScores();
         }
 
-        // Food for the Soul Randomizer (1 random verse per click)
+        // Food for the Soul Randomizer
         function displayRandomVerse() {
             const randomIndex = Math.floor(Math.random() * bibleVerses.length);
             const verse = bibleVerses[randomIndex];
