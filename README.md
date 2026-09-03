@@ -1,2 +1,5 @@
-# NMAT-Study-Tracker
-A personalized, minimalist study companion designed to help pre-med students prepare for the NMAT. Features include a focused 50/10 Pomodoro study timer, mock exam simulation, comprehensive progress logs, and daily inspiration to keep you motivated on your journey to medical school. Built with a cute, modern aesthetic.
+# 🌸 NMAT Blossom Tracker
+A personalized, minimalist study companion designed for pre-med students preparing for the NMAT.
+
+🔗 **[Download the App Here!](https://your-hosted-app-url.com)**
+Note: App is available on Android only.
