@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NMAT Study Tracker - Blossom & Shine</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Quicksand for a soft, cute aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for cute icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7',
+                        blush: '#FCE7E6',
+                        softpink: '#F4B6C2',
+                        rosy: '#E8929E',
+                        warmbeige: '#F4ECD8',
+                        deeppink: '#D46A7E',
+                        textdark: '#5A4A4B',
+                        cardbg: '#FFF9F9',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FDFBF7;
+            color: #5A4A4B;
+        }
+        /* Custom scrollbar for cute look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFBF7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #F4B6C2;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #E8929E;
+        }
+        .cute-shadow {
+            box-shadow: 0 10px 25px -5px rgba(244, 182, 194, 0.25), 0 8px 10px -6px rgba(244, 182, 194, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-softpink selection:text-white">
+
+    <!-- Navigation Bar -->
+    <header class="bg-cardbg border-b border-softpink/40 sticky top-0 z-40 backdrop-blur-md bg-opacity-90">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Hamburger Icon button -->
+                <button id="hamburger-btn" class="p-2 rounded-xl bg-blush hover:bg-softpink hover:text-white text-deeppink transition-all duration-200 focus:outline-none shadow-sm" aria-label="Open Menu">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <div class="flex items-center space-x-2 cursor-pointer" onclick="navigateTo('home')">
+                    <span class="bg-softpink text-white p-2 rounded-2xl cute-shadow flex items-center justify-center w-9 h-9">
+                        <i class="fa-solid fa-graduation-cap text-sm"></i>
+                    </span>
+                    <h1 class="font-bold text-xl tracking-wide bg-gradient-to-r from-deeppink to-rosy bg-clip-text text-transparent">NMAT Blossom Tracker</h1>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-xs font-semibold px-3 py-1 bg-warmbeige text-deeppink rounded-full hidden sm:inline-block">Target: 99+ Percentile ✨</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay & Menu Drawer -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/20 z-50 hidden backdrop-blur-sm transition-opacity duration-300"></div>
+    <aside id="sidebar" class="fixed top-0 left-0 bottom-0 w-80 bg-cardbg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col border-r border-softpink/40 shadow-2xl">
+        <div class="p-5 border-b border-softpink/30 flex items-center justify-between bg-gradient-to-r from-blush to-warmbeige">
+            <div class="flex items-center space-x-2">
+                <span class="text-deeppink font-bold text-lg"><i class="fa-solid fa-spa mr-2"></i>NMAT Menu</span>
+            </div>
+            <button id="sidebar-close" class="p-2 rounded-full hover:bg-white/80 text-deeppink transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+            <button onclick="navigateTo('home'); closeSidebar();" class="w-full flex items-center space-x-3 p-3 rounded-2xl hover:bg-blush text-textdark font-medium transition-all group">
+                <span class="w-10 h-10 rounded-xl bg-blush group-hover:bg-softpink group-hover:text-white text-deeppink flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-house"></i>
+                </span>
+                <span>Home Screen</span>
+            </button>
+            <button onclick="navigateTo('start-session'); closeSidebar();" class="w-full flex items-center space-x-3 p-3 rounded-2xl hover:bg-blush text-textdark font-medium transition-all group">
+                <span class="w-10 h-10 rounded-xl bg-blush group-hover:bg-softpink group-hover:text-white text-deeppink flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-play"></i>
+                </span>
+                <span> Start Session</span>
+            </button>
+            <button onclick="navigateTo('session-logs'); closeSidebar();" class="w-full flex items-center space-x-3 p-3 rounded-2xl hover:bg-blush text-textdark font-medium transition-all group">
+                <span class="w-10 h-10 rounded-xl bg-blush group-hover:bg-softpink group-hover:text-white text-deeppink flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-chart-bar"></i>
+                </span>
+                <span> Session Logs</span>
+            </button>
+            <button onclick="navigateTo('session-report'); closeSidebar();" class="w-full flex items-center space-x-3 p-3 rounded-2xl hover:bg-blush text-textdark font-medium transition-all group">
+                <span class="w-10 h-10 rounded-xl bg-blush group-hover:bg-softpink group-hover:text-white text-deeppink flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </span>
+                <span> Session Report</span>
+            </button>
+            <button onclick="navigateTo('food-for-soul'); closeSidebar();" class="w-full flex items-center space-x-3 p-3 rounded-2xl hover:bg-blush text-textdark font-medium transition-all group">
+                <span class="w-10 h-10 rounded-xl bg-blush group-hover:bg-softpink group-hover:text-white text-deeppink flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-book-bible"></i>
+                </span>
+                <span>Food for the Soul</span>
+            </button>
+        </nav>
+        <div class="p-4 border-t border-softpink/30 text-center text-xs text-textdark/70">
+            Made with love for your NMAT journey 🌸
+        </div>
+    </aside>
+
+    <!-- Main Content Dynamic Viewport -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 mb-16">
+        
+        <!-- 1. HOME SCREEN VIEW -->
+        <section id="view-home" class="view-section space-y-6">
+            <div class="bg-gradient-to-r from-blush via-warmbeige to-softpink/30 rounded-3xl p-8 sm:p-10 cute-shadow border border-softpink/40 text-center relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 text-softpink/20 text-9xl pointer-events-none">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <span class="bg-white/80 text-deeppink text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider inline-block mb-4 shadow-sm">Your Medical School Dream Awaits</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-deeppink mb-4">Hello, Future Doctor! 🩺✨</h2>
+                <p class="text-textdark/80 max-w-2xl mx-auto text-base sm:text-lg mb-8 leading-relaxed">
+                    Welcome to your personalized NMAT companion. Track your study hours using the 50/10 Pomodoro technique, practice mock exams, review your progress, and nourish your soul with inspiring verses.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="navigateTo('start-session')" class="bg-deeppink hover:bg-rosy text-white font-bold px-8 py-4 rounded-2xl cute-shadow transition-all duration-200 transform hover:-translate-y-0.5 flex items-center space-x-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>Start Study Session</span>
+                    </button>
+                    <button onclick="navigateTo('food-for-soul')" class="bg-white hover:bg-blush text-deeppink border border-softpink font-bold px-6 py-4 rounded-2xl transition-all duration-200 flex items-center space-x-2">
+                        <i class="fa-solid fa-heart"></i>
+                        <span>Food for the Soul</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Summary Cards (2 columns now) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div onclick="navigateTo('session-logs')" class="bg-cardbg p-6 rounded-3xl border border-softpink/40 cute-shadow cursor-pointer hover:border-rosy transition-all group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="w-12 h-12 rounded-2xl bg-blush group-hover:bg-softpink group-hover:text-white text-deeppink flex items-center justify-center text-xl transition-colors">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </span>
+                        <span class="text-xs font-bold text-deeppink bg-warmbeige px-2.5 py-1 rounded-full">Logs</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1">Total Hours Studied</h3>
+                    <p id="home-total-hours" class="text-2xl font-extrabold text-deeppink">0.0 hrs</p>
+                </div>
+                <div onclick="navigateTo('session-report')" class="bg-cardbg p-6 rounded-3xl border border-softpink/40 cute-shadow cursor-pointer hover:border-rosy transition-all group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="w-12 h-12 rounded-2xl bg-blush group-hover:bg-softpink group-hover:text-white text-deeppink flex items-center justify-center text-xl transition-colors">
+                            <i class="fa-solid fa-award"></i>
+                        </span>
+                        <span class="text-xs font-bold text-deeppink bg-warmbeige px-2.5 py-1 rounded-full">Reports</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1">Mock Exam Average</h3>
+                    <p id="home-avg-score" class="text-2xl font-extrabold text-deeppink">0%</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. START SESSION VIEW -->
+        <section id="view-start-session" class="view-section hidden space-y-6">
+            <div class="bg-cardbg p-6 sm:p-8 rounded-3xl border border-softpink/40 cute-shadow">
+                <h2 class="text-2xl font-bold text-deeppink mb-6 flex items-center">
+                    <i class="fa-solid fa-stopwatch mr-3"></i>Start NMAT Session
+                </h2>
+
+                <!-- Step 1: Choose Mode -->
+                <div id="session-step-1" class="space-y-6">
+                    <label class="block text-sm font-bold text-textdark mb-3">Choose Your Session Type:</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button onclick="selectSessionMode('study')" class="p-6 rounded-2xl border-2 border-softpink/60 hover:border-deeppink bg-blush/30 hover:bg-blush transition-all text-left group">
+                            <div class="w-12 h-12 rounded-xl bg-softpink text-white flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-deeppink mb-1">Study Timer (Timer 1)</h3>
+                            <p class="text-sm text-textdark/70">Study with 50/10 Pomodoro intervals. Choose hours & specific NMAT area.</p>
+                        </button>
+                        <button onclick="selectSessionMode('mock')" class="p-6 rounded-2xl border-2 border-softpink/60 hover:border-deeppink bg-blush/30 hover:bg-blush transition-all text-left group">
+                            <div class="w-12 h-12 rounded-xl bg-softpink text-white flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-file-pen"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-deeppink mb-1">Mock Exam (Timer 2)</h3>
+                            <p class="text-sm text-textdark/70">Simulate actual NMAT test conditions with strict time limits.</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2A: Study Timer Configuration -->
+                <div id="session-step-study-config" class="space-y-6 hidden">
+                    <button onclick="resetSessionSetup()" class="text-xs font-bold text-deeppink hover:underline flex items-center mb-2">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Back to session types
+                    </button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-textdark mb-2">Select NMAT Part:</label>
+                            <select id="study-part" onchange="updateAreasDropdown()" class="w-full p-3.5 rounded-2xl border border-softpink bg-white focus:outline-none focus:ring-2 focus:ring-deeppink text-textdark">
+                                <option value="Part 1: Mental Ability">Part 1: Mental Ability</option>
+                                <option value="Part 2: Academic Proficiency">Part 2: Academic Proficiency</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-textdark mb-2">Select NMAT Area:</label>
+                            <select id="study-area" class="w-full p-3.5 rounded-2xl border border-softpink bg-white focus:outline-none focus:ring-2 focus:ring-deeppink text-textdark">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-textdark mb-2">Select Number of Study Hours [1, 2, 3, 4, 5]:</label>
+                        <div class="grid grid-cols-5 gap-3">
+                            <button onclick="selectStudyHours(1)" class="hour-btn p-3 rounded-xl border border-softpink font-bold hover:bg-deeppink hover:text-white transition-all text-center" data-hours="1">1 hr</button>
+                            <button onclick="selectStudyHours(2)" class="hour-btn p-3 rounded-xl border border-softpink font-bold hover:bg-deeppink hover:text-white transition-all text-center" data-hours="2">2 hrs</button>
+                            <button onclick="selectStudyHours(3)" class="hour-btn p-3 rounded-xl border border-softpink font-bold hover:bg-deeppink hover:text-white transition-all text-center" data-hours="3">3 hrs</button>
+                            <button onclick="selectStudyHours(4)" class="hour-btn p-3 rounded-xl border border-softpink font-bold hover:bg-deeppink hover:text-white transition-all text-center" data-hours="4">4 hrs</button>
+                            <button onclick="selectStudyHours(5)" class="hour-btn p-3 rounded-xl border border-softpink font-bold hover:bg-deeppink hover:text-white transition-all text-center" data-hours="5">5 hrs</button>
+                        </div>
+                    </div>
+                    <button onclick="startStudyTimer()" class="w-full bg-deeppink hover:bg-rosy text-white font-bold py-4 rounded-2xl cute-shadow transition-all mt-4">
+                        Launch Study Timer (50/10 Rule) 🚀
+                    </button>
+                </div>
+
+                <!-- Step 2B: Mock Exam Timer Configuration -->
+                <div id="session-step-mock-config" class="space-y-6 hidden">
+                    <button onclick="resetSessionSetup()" class="text-xs font-bold text-deeppink hover:underline flex items-center mb-2">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Back to session types
+                    </button>
+                    <div>
+                        <label class="block text-sm font-bold text-textdark mb-2">Select Exam Part:</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button onclick="selectMockPart('Part 1: Mental Ability')" class="mock-part-btn p-5 rounded-2xl border-2 border-softpink hover:border-deeppink bg-white transition-all text-left">
+                                <h4 class="font-bold text-deeppink text-lg mb-1">Part 1: Mental Ability</h4>
+                                <p class="text-sm text-textdark/70">Duration: 2 hours and 15 minutes</p>
+                            </button>
+                            <button onclick="selectMockPart('Part 2: Academic Proficiency')" class="mock-part-btn p-5 rounded-2xl border-2 border-softpink hover:border-deeppink bg-white transition-all text-left">
+                                <h4 class="font-bold text-deeppink text-lg mb-1">Part 2: Academic Proficiency</h4>
+                                <p class="text-sm text-textdark/70">Duration: 1 hour and 30 minutes</p>
+                            </button>
+                        </div>
+                    </div>
+                    <button onclick="startMockTimer()" class="w-full bg-deeppink hover:bg-rosy text-white font-bold py-4 rounded-2xl cute-shadow transition-all mt-4">
+                        Launch Mock Exam Timer ⏱️
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. ACTIVE TIMER VIEW -->
+        <section id="view-active-timer" class="view-section hidden space-y-6">
+            <div class="bg-cardbg p-8 sm:p-10 rounded-3xl border border-softpink/40 cute-shadow text-center max-w-2xl mx-auto">
+                <div id="timer-badge" class="inline-block px-4 py-1.5 rounded-full bg-warmbeige text-deeppink font-bold text-xs uppercase tracking-wider mb-4">Study Session (Pomodoro)</div>
+                <h3 id="timer-title" class="text-xl font-bold text-textdark mb-2">Verbal Reasoning</h3>
+                <p id="timer-subtitle" class="text-sm text-deeppink font-medium mb-8">Study Interval: 50 minutes study</p>
+
+                <!-- Clock Display -->
+                <div class="relative w-64 h-64 mx-auto mb-8 flex items-center justify-center bg-gradient-to-br from-blush to-warmbeige rounded-full border-4 border-softpink cute-shadow">
+                    <div class="absolute inset-2 rounded-full border-2 border-dashed border-deeppink/30 animate-spin" style="animation-duration: 60s;"></div>
+                    <div class="text-center z-10">
+                        <span id="clock-display" class="text-5xl sm:text-6xl font-extrabold text-deeppink tracking-tight">50:00</span>
+                        <p id="clock-status" class="text-xs font-bold text-textdark/60 mt-1 uppercase tracking-widest">Studying</p>
+                    </div>
+                </div>
+
+                <!-- Timer Controls -->
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button id="btn-pause" onclick="togglePauseTimer()" class="bg-warmbeige hover:bg-softpink hover:text-white text-deeppink font-bold px-6 py-3 rounded-2xl transition-all flex items-center space-x-2">
+                        <i id="pause-icon" class="fa-solid fa-pause"></i>
+                        <span id="pause-text">Pause</span>
+                    </button>
+                    <button onclick="completeActiveTimer()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-2xl transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Complete</span>
+                    </button>
+                    <button onclick="abortActiveTimer()" class="bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold px-6 py-3 rounded-2xl transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Abort</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. SESSION LOGS VIEW -->
+        <section id="view-session-logs" class="view-section hidden space-y-6">
+            <div class="bg-cardbg p-6 sm:p-8 rounded-3xl border border-softpink/40 cute-shadow">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-deeppink flex items-center">
+                            <i class="fa-solid fa-chart-bar mr-3"></i>Session Logs & Study Hours
+                        </h2>
+                        <p class="text-sm text-textdark/70">Total accumulated study time per area across both NMAT parts.</p>
+                    </div>
+                    <button onclick="resetLogs()" class="text-xs text-rose-500 hover:underline font-bold">
+                        <i class="fa-solid fa-trash mr-1"></i> Reset Logs
+                    </button>
+                </div>
+
+                <!-- Total Summary Banner -->
+                <div class="bg-gradient-to-r from-blush to-warmbeige p-6 rounded-2xl mb-8 flex items-center justify-between border border-softpink/40">
+                    <div>
+                        <p class="text-sm font-bold text-textdark/70 uppercase tracking-wider">Total Cumulative Study Time</p>
+                        <h3 id="logs-total-time" class="text-3xl font-extrabold text-deeppink mt-1">0.0 Hours</h3>
+                    </div>
+                    <span class="w-14 h-14 rounded-2xl bg-white text-deeppink flex items-center justify-center text-2xl shadow-sm">
+                        <i class="fa-solid fa-fire text-amber-500"></i>
+                    </span>
+                </div>
+
+                <!-- Area Breakdown Lists -->
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="font-bold text-lg text-deeppink mb-3 pb-2 border-b border-softpink/30 flex items-center">
+                            <i class="fa-solid fa-brain mr-2 text-sm"></i>Part 1: Mental Ability
+                        </h3>
+                        <div id="logs-part1-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-deeppink mb-3 pb-2 border-b border-softpink/30 flex items-center">
+                            <i class="fa-solid fa-flask mr-2 text-sm"></i>Part 2: Academic Proficiency
+                        </h3>
+                        <div id="logs-part2-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. SESSION REPORT VIEW -->
+        <section id="view-session-report" class="view-section hidden space-y-6">
+            <div class="bg-cardbg p-6 sm:p-8 rounded-3xl border border-softpink/40 cute-shadow">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-deeppink flex items-center">
+                            <i class="fa-solid fa-clipboard-list mr-3"></i>Session Report & Mock Scores
+                        </h2>
+                        <p class="text-sm text-textdark/70">Record and track your mock board scores per exam part.</p>
+                    </div>
+                </div>
+
+                <!-- Input Form Card -->
+                <div class="bg-blush/40 p-6 rounded-2xl border border-softpink/40 mb-8">
+                    <h3 class="font-bold text-deeppink mb-4">Add New Mock Exam Record</h3>
+                    <form id="mock-score-form" onsubmit="handleMockScoreSubmit(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-textdark mb-1">Select Exam Part</label>
+                            <select id="report-part" class="w-full p-3 rounded-xl border border-softpink bg-white text-sm focus:outline-none focus:ring-2 focus:ring-deeppink">
+                                <option value="Part 1: Mental Ability">Part 1: Mental Ability</option>
+                                <option value="Part 2: Academic Proficiency">Part 2: Academic Proficiency</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-textdark mb-1">Number of Items</label>
+                            <input type="number" id="report-total" min="1" required placeholder="e.g. 100" class="w-full p-3 rounded-xl border border-softpink bg-white text-sm focus:outline-none focus:ring-2 focus:ring-deeppink">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-textdark mb-1">Number of Correct Items</label>
+                            <input type="number" id="report-correct" min="0" required placeholder="e.g. 85" class="w-full p-3 rounded-xl border border-softpink bg-white text-sm focus:outline-none focus:ring-2 focus:ring-deeppink">
+                        </div>
+                        <div class="sm:col-span-3 flex justify-end">
+                            <button type="submit" class="bg-deeppink hover:bg-rosy text-white font-bold px-6 py-3 rounded-xl transition-all text-sm flex items-center space-x-2">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Save Mock Score</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Saved Scores Table / List -->
+                <div>
+                    <h3 class="font-bold text-lg text-deeppink mb-4">Your Mock Exam History</h3>
+                    <div id="mock-scores-container" class="space-y-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. FOOD FOR THE SOUL VIEW -->
+        <section id="view-food-for-soul" class="view-section hidden space-y-6">
+            <div class="bg-cardbg p-6 sm:p-8 rounded-3xl border border-softpink/40 cute-shadow">
+                <div class="text-center max-w-xl mx-auto mb-8">
+                    <span class="w-12 h-12 rounded-2xl bg-blush text-deeppink flex items-center justify-center text-xl mx-auto mb-3 shadow-sm">
+                        <i class="fa-solid fa-dove"></i>
+                    </span>
+                    <h2 class="text-2xl font-bold text-deeppink mb-2">Food for the Soul 🕊️</h2>
+                    <p class="text-sm text-textdark/70">Uplifting Bible verses to strengthen your heart and mind throughout your NMAT preparation.</p>
+                </div>
+
+                <!-- Verses List -->
+                <div id="verses-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Custom Modal for Alerts/Messages -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/40 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-cardbg max-w-sm w-full p-6 rounded-3xl border border-softpink cute-shadow text-center space-y-4">
+            <div id="modal-icon" class="w-14 h-14 rounded-2xl bg-blush text-deeppink flex items-center justify-center text-2xl mx-auto">
+                <i class="fa-solid fa-bell"></i>
+            </div>
+            <h3 id="modal-title" class="font-bold text-xl text-deeppink">Notice</h3>
+            <p id="modal-message" class="text-sm text-textdark/80">Message goes here.</p>
+            <button onclick="closeModal()" class="w-full bg-deeppink hover:bg-rosy text-white font-bold py-3 rounded-2xl transition-all">
+                Got it ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-cardbg border-t border-softpink/30 py-6 text-center text-xs text-textdark/60 mt-auto">
+        <p>NMAT Study Tracker &bull; Designed with cute aesthetics &bull; Persists automatically on this device</p>
+    </footer>
+
+    <!-- Application JavaScript Logic -->
+    <script>
+        // Data structure for NMAT areas
+        const nmatAreas = {
+            "Part 1: Mental Ability": ["Verbal Reasoning", "Inductive Reasoning", "Quantitative Ability", "Perceptual Acuity"],
+            "Part 2: Academic Proficiency": ["Biology", "Chemistry", "Physics", "Social Science"]
+        };
+
+        // All 30 Bible Verses provided
+        const bibleVerses = [
+            { ref: "Philippians 4:13", text: "I can do all things through Christ who strengthens me." },
+            { ref: "Proverbs 16:3", text: "Commit your work to the Lord, and your plans will be established." },
+            { ref: "Joshua 1:9", text: "Be strong and courageous. Do not be frightened... for the Lord your God is with you wherever you go." },
+            { ref: "Proverbs 3:5", text: "Trust in the Lord with all your heart, and do not lean on your own understanding." },
+            { ref: "Psalm 119:105", text: "Your word is a lamp to my feet and a light to my path." },
+            { ref: "Galatians 6:9", text: "Let us not grow weary of doing good, for in due season we will reap, if we do not give up." },
+            { ref: "Isaiah 40:31", text: "Those who hope in the Lord will renew their strength. They will soar on wings like eagles." },
+            { ref: "Colossians 3:23", text: "Whatever you do, work heartily, as for the Lord and not for men." },
+            { ref: "2 Timothy 1:7", text: "God gave us a spirit not of fear, but of power and love and self-control." },
+            { ref: "Psalm 46:10", text: "Be still, and know that I am God." },
+            { ref: "James 1:5", text: "If any of you lacks wisdom, let him ask God, who gives generously to all without finding fault." },
+            { ref: "Romans 12:12", text: "Be joyful in hope, patient in affliction, faithful in prayer." },
+            { ref: "1 Corinthians 16:13", text: "Be watchful, stand firm in the faith, act like men, be strong." },
+            { ref: "Psalm 37:5", text: "Commit your way to the Lord; trust in him, and he will act." },
+            { ref: "Matthew 19:26", text: "With man this is impossible, but with God all things are possible." },
+            { ref: "Proverbs 4:7", text: "Wisdom is supreme; therefore get wisdom. Though it cost all you have, get understanding." },
+            { ref: "Hebrews 12:11", text: "Later it yields the peaceful fruit of righteousness to those who have been trained by it." },
+            { ref: "Psalm 28:7", text: "The Lord is my strength and my shield; in him my heart trusts, and I am helped." },
+            { ref: "Romans 8:31", text: "If God is for us, who can be against us?" },
+            { ref: "Isaiah 41:10", text: "Fear not, for I am with you; be not dismayed, for I am your God." },
+            { ref: "Psalm 121:2", text: "My help comes from the Lord, who made heaven and earth." },
+            { ref: "1 Thessalonians 5:16", text: "Rejoice always." },
+            { ref: "Ephesians 6:10", text: "Be strong in the Lord and in the strength of his might." },
+            { ref: "Proverbs 24:16", text: "Though the righteous fall seven times, they rise again." },
+            { ref: "Psalm 118:24", text: "This is the day that the Lord has made; let us rejoice and be glad in it." },
+            { ref: "Hebrews 10:36", text: "You need endurance, so that when you have done the will of God you may receive what is promised." },
+            { ref: "James 1:12", text: "Blessed is the man who remains steadfast under trial, for when he has stood the test he will receive the crown of life." },
+            { ref: "Psalm 73:26", text: "God is the strength of my heart and my portion forever." },
+            { ref: "Deuteronomy 31:8", text: "The Lord himself goes before you and will be with you; he will never leave you nor forsake you." },
+            { ref: "Lamentations 3:23", text: "His mercies are new every morning; great is your faithfulness." }
+        ];
+
+        // State & Persistence
+        let appState = {
+            activeTab: 'home',
+            studyHoursLogs: {}, // e.g., {"Verbal Reasoning": 2.5, ...}
+            mockScores: [],     // Array of { part, total, correct, percentage, date }
+            currentSession: {
+                type: null, // 'study' or 'mock'
+                part: '',
+                area: '',
+                selectedHours: 1,
+                remainingSeconds: 0,
+                totalSeconds: 0,
+                isStudyPhase: true, // true = 50m study, false = 10m break for Timer 1
+                timerRunning: false,
+                timerInterval: null
+            }
+        };
+
+        // Load state from localStorage on startup
+        function loadAppState() {
+            const saved = localStorage.getItem('nmat_tracker_state_v1');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    appState.studyHoursLogs = parsed.studyHoursLogs || {};
+                    appState.mockScores = parsed.mockScores || [];
+                } catch(e) {
+                    console.error("Error loading saved state", e);
+                }
+            }
+        }
+
+        // Save state to localStorage
+        function saveAppState() {
+            const dataToSave = {
+                studyHoursLogs: appState.studyHoursLogs,
+                mockScores: appState.mockScores
+            };
+            localStorage.setItem('nmat_tracker_state_v1', JSON.stringify(dataToSave));
+            updateHomeStats();
+        }
+
+        // Navigation Controller
+        function navigateTo(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById(`view-${viewId}`);
+            if (target) {
+                target.classList.remove('hidden');
+                appState.activeTab = viewId;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Trigger view specific initializations
+                if (viewId === 'session-logs') renderSessionLogs();
+                if (viewId === 'session-report') renderMockScores();
+                if (viewId === 'food-for-soul') renderVerses();
+            }
+        }
+
+        // Sidebar Controls
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const sidebarClose = document.getElementById('sidebar-close');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('hidden');
+        }
+
+        hamburgerBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Custom Modal Controller
+        function showModal(title, message, iconClass = "fa-solid fa-circle-check") {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('modal-icon').innerHTML = `<i class="${iconClass}"></i>`;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // Start Session Setup Functions
+        function selectSessionMode(mode) {
+            document.getElementById('session-step-1').classList.add('hidden');
+            if (mode === 'study') {
+                document.getElementById('session-step-study-config').classList.remove('hidden');
+                updateAreasDropdown();
+                selectStudyHours(1); // default 1 hour
+            } else {
+                document.getElementById('session-step-mock-config').classList.remove('hidden');
+                selectMockPart('Part 1: Mental Ability');
+            }
+        }
+
+        function resetSessionSetup() {
+            stopActiveTimerInterval();
+            document.getElementById('session-step-1').classList.remove('hidden');
+            document.getElementById('session-step-study-config').classList.add('hidden');
+            document.getElementById('session-step-mock-config').classList.add('hidden');
+        }
+
+        function updateAreasDropdown() {
+            const partSelect = document.getElementById('study-part');
+            const areaSelect = document.getElementById('study-area');
+            const selectedPart = partSelect.value;
+            const areas = nmatAreas[selectedPart] || [];
+            
+            areaSelect.innerHTML = '';
+            areas.forEach(area => {
+                const opt = document.createElement('option');
+                opt.value = area;
+                opt.innerText = area;
+                areaSelect.appendChild(opt);
+            });
+        }
+
+        let chosenStudyHours = 1;
+        function selectStudyHours(hrs) {
+            chosenStudyHours = hrs;
+            document.querySelectorAll('.hour-btn').forEach(btn => {
+                if (parseInt(btn.getAttribute('data-hours')) === hrs) {
+                    btn.classList.add('bg-deeppink', 'text-white');
+                    btn.classList.remove('border-softpink');
+                } else {
+                    btn.classList.remove('bg-deeppink', 'text-white');
+                    btn.classList.add('border-softpink');
+                }
+            });
+        }
+
+        let chosenMockPart = 'Part 1: Mental Ability';
+        function selectMockPart(partName) {
+            chosenMockPart = partName;
+            document.querySelectorAll('.mock-part-btn').forEach(btn => {
+                if (btn.innerText.includes(partName)) {
+                    btn.classList.add('border-deeppink', 'bg-blush/40');
+                } else {
+                    btn.classList.remove('border-deeppink', 'bg-blush/40');
+                }
+            });
+        }
+
+        // Timer Execution
+        let timerInterval = null;
+
+        function startStudyTimer() {
+            const part = document.getElementById('study-part').value;
+            const area = document.getElementById('study-area').value;
+            
+            appState.currentSession = {
+                type: 'study',
+                part: part,
+                area: area,
+                selectedHours: chosenStudyHours,
+                remainingSeconds: 50 * 60, // 50 mins study interval first
+                totalSeconds: chosenStudyHours * 3600,
+                elapsedStudySeconds: 0,
+                isStudyPhase: true,
+                timerRunning: true
+            };
+
+            navigateTo('active-timer');
+            setupTimerUI();
+            runTimerEngine();
+        }
+
+        function startMockTimer() {
+            const durationSecs = chosenMockPart === 'Part 1: Mental Ability' 
+                ? (2 * 3600 + 15 * 60)  // 2 hrs 15 mins
+                : (1 * 3600 + 30 * 60); // 1 hr 30 mins
+
+            appState.currentSession = {
+                type: 'mock',
+                part: chosenMockPart,
+                area: chosenMockPart,
+                selectedHours: 0,
+                remainingSeconds: durationSecs,
+                totalSeconds: durationSecs,
+                isStudyPhase: true,
+                timerRunning: true
+            };
+
+            navigateTo('active-timer');
+            setupTimerUI();
+            runTimerEngine();
+        }
+
+        function setupTimerUI() {
+            const session = appState.currentSession;
+            document.getElementById('timer-badge').innerText = session.type === 'study' ? 'Study Session (50/10 Pomodoro)' : 'Mock Exam Simulation';
+            document.getElementById('timer-title').innerText = session.area;
+            document.getElementById('timer-subtitle').innerText = session.type === 'study' 
+                ? 'Current Phase: 50 Minutes Study' 
+                : (session.part === 'Part 1: Mental Ability' ? 'Duration: 2 hours 15 minutes' : 'Duration: 1 hour 30 minutes');
+            
+            updateClockDisplay();
+        }
+
+        function runTimerEngine() {
+            stopActiveTimerInterval();
+            timerInterval = setInterval(() => {
+                const session = appState.currentSession;
+                if (!session.timerRunning) return;
+
+                if (session.remainingSeconds > 0) {
+                    session.remainingSeconds--;
+                    if (session.type === 'study' && session.isStudyPhase) {
+                        session.elapsedStudySeconds = (session.elapsedStudySeconds || 0) + 1;
+                    }
+
+                    // Handle Pomodoro alternation for Study Timer (50 min study / 10 min break)
+                    if (session.type === 'study' && session.remainingSeconds === 0) {
+                        if (session.isStudyPhase) {
+                            // Switch to break (10 minutes)
+                            session.isStudyPhase = false;
+                            session.remainingSeconds = 10 * 60;
+                            document.getElementById('timer-subtitle').innerText = 'Break Phase: 10 Minutes Rest ☕';
+                            showModal('Time for a Break!', 'Great job focusing for 50 minutes! Take a 10-minute stretch or sip some water.', 'fa-solid fa-mug-hot');
+                        } else {
+                            // Switch back to study
+                            session.isStudyPhase = true;
+                            session.remainingSeconds = 50 * 60;
+                            document.getElementById('timer-subtitle').innerText = 'Study Phase: 50 Minutes Study 📚';
+                            showModal('Back to Studying!', 'Break is over. Let us dive back into your NMAT prep!', 'fa-solid fa-book');
+                        }
+                    }
+
+                    // Check if entire study hours session completed
+                    if (session.type === 'study' && session.elapsedStudySeconds >= session.selectedHours * 3600) {
+                        completeActiveTimer();
+                        return;
+                    }
+
+                    if (session.type === 'mock' && session.remainingSeconds === 0) {
+                        completeActiveTimer();
+                        return;
+                    }
+
+                    updateClockDisplay();
+                }
+            }, 1000);
+        }
+
+        function stopActiveTimerInterval() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function updateClockDisplay() {
+            const session = appState.currentSession;
+            const mins = Math.floor(session.remainingSeconds / 60);
+            const secs = session.remainingSeconds % 60;
+            document.getElementById('clock-display').innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            document.getElementById('clock-status').innerText = session.timerRunning ? (session.isStudyPhase ? 'Studying' : 'Resting') : 'Paused';
+        }
+
+        function togglePauseTimer() {
+            const session = appState.currentSession;
+            session.timerRunning = !session.timerRunning;
+            const icon = document.getElementById('pause-icon');
+            const text = document.getElementById('pause-text');
+            if (session.timerRunning) {
+                icon.className = 'fa-solid fa-pause';
+                text.innerText = 'Pause';
+            } else {
+                icon.className = 'fa-solid fa-play';
+                text.innerText = 'Resume';
+            }
+            updateClockDisplay();
+        }
+
+        function abortActiveTimer() {
+            stopActiveTimerInterval();
+            showModal('Session Aborted', 'Your session was cancelled without logging hours.', 'fa-solid fa-triangle-exclamation');
+            resetSessionSetup();
+            navigateTo('start-session');
+        }
+
+        function completeActiveTimer() {
+            stopActiveTimerInterval();
+            const session = appState.currentSession;
+            
+            if (session.type === 'study') {
+                // Calculate actual study hours accrued
+                const accruedHours = (session.elapsedStudySeconds || (session.selectedHours * 3600)) / 3600;
+                const area = session.area;
+                
+                appState.studyHoursLogs[area] = (appState.studyHoursLogs[area] || 0) + accruedHours;
+                saveAppState();
+                
+                showModal('Session Completed!', `Congratulations! ${accruedHours.toFixed(1)} hours successfully logged for ${area}. Keep shining! ✨`, 'fa-solid fa-award');
+                navigateTo('session-logs');
+            } else {
+                showModal('Mock Exam Finished!', `Your mock exam timer for ${session.part} has concluded. Record your score in the Session Report tab!`, 'fa-solid fa-file-circle-check');
+                navigateTo('session-report');
+            }
+            resetSessionSetup();
+        }
+
+        // Session Logs Render
+        function renderSessionLogs() {
+            let totalHoursAll = 0;
+            
+            // Part 1 Render
+            const part1Grid = document.getElementById('logs-part1-grid');
+            part1Grid.innerHTML = '';
+            nmatAreas["Part 1: Mental Ability"].forEach(area => {
+                const hrs = appState.studyHoursLogs[area] || 0;
+                totalHoursAll += hrs;
+                part1Grid.innerHTML += `
+                    <div class="bg-blush/30 p-4 rounded-2xl border border-softpink/40 flex items-center justify-between">
+                        <div>
+                            <h4 class="font-bold text-textdark text-sm mb-1">${area}</h4>
+                            <p class="text-xs text-deeppink font-semibold">Logged Time</p>
+                        </div>
+                        <span class="text-lg font-extrabold text-deeppink bg-white px-3 py-1.5 rounded-xl shadow-sm">${hrs.toFixed(1)} hrs</span>
+                    </div>
+                `;
+            });
+
+            // Part 2 Render
+            const part2Grid = document.getElementById('logs-part2-grid');
+            part2Grid.innerHTML = '';
+            nmatAreas["Part 2: Academic Proficiency"].forEach(area => {
+                const hrs = appState.studyHoursLogs[area] || 0;
+                totalHoursAll += hrs;
+                part2Grid.innerHTML += `
+                    <div class="bg-blush/30 p-4 rounded-2xl border border-softpink/40 flex items-center justify-between">
+                        <div>
+                            <h4 class="font-bold text-textdark text-sm mb-1">${area}</h4>
+                            <p class="text-xs text-deeppink font-semibold">Logged Time</p>
+                        </div>
+                        <span class="text-lg font-extrabold text-deeppink bg-white px-3 py-1.5 rounded-xl shadow-sm">${hrs.toFixed(1)} hrs</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('logs-total-time').innerText = `${totalHoursAll.toFixed(1)} Hours`;
+            document.getElementById('home-total-hours').innerText = `${totalHoursAll.toFixed(1)} hrs`;
+        }
+
+        function resetLogs() {
+            if (confirm("Are you sure you want to reset all study logs?")) {
+                appState.studyHoursLogs = {};
+                saveAppState();
+                renderSessionLogs();
+            }
+        }
+
+        // Session Report & Mock Scores Render
+        function handleMockScoreSubmit(e) {
+            e.preventDefault();
+            const part = document.getElementById('report-part').value;
+            const total = parseInt(document.getElementById('report-total').value);
+            const correct = parseInt(document.getElementById('report-correct').value);
+
+            if (correct > total) {
+                showModal('Invalid Score', 'Correct items cannot exceed total number of items.', 'fa-solid fa-triangle-exclamation');
+                return;
+            }
+
+            const percentage = ((correct / total) * 100).toFixed(1);
+            const record = {
+                part: part,
+                total: total,
+                correct: correct,
+                percentage: percentage,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+            };
+
+            appState.mockScores.unshift(record);
+            saveAppState();
+            renderMockScores();
+
+            document.getElementById('mock-score-form').reset();
+            showModal('Score Saved!', `Mock exam score of ${percentage}% recorded successfully.`, 'fa-solid fa-circle-check');
+        }
+
+        function renderMockScores() {
+            const container = document.getElementById('mock-scores-container');
+            container.innerHTML = '';
+
+            if (appState.mockScores.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-textdark/60 bg-blush/20 rounded-2xl border border-softpink/30">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 text-softpink"></i>
+                        <p class="text-sm">No mock exam scores recorded yet. Add one above!</p>
+                    </div>
+                `;
+                document.getElementById('home-avg-score').innerText = '0%';
+                return;
+            }
+
+            let totalPercent = 0;
+            appState.mockScores.forEach((score, index) => {
+                totalPercent += parseFloat(score.percentage);
+                container.innerHTML += `
+                    <div class="bg-blush/30 p-4 rounded-2xl border border-softpink/40 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-deeppink bg-white px-2.5 py-1 rounded-full">${score.date}</span>
+                            <h4 class="font-bold text-textdark mt-1">${score.part}</h4>
+                            <p class="text-xs text-textdark/70">Correct: ${score.correct} / ${score.total} items</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <span class="text-xl font-extrabold text-deeppink">${score.percentage}%</span>
+                            <button onclick="deleteMockScore(${index})" class="text-rose-400 hover:text-rose-600 p-2">
+                                <i class="fa-solid fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const avg = (totalPercent / appState.mockScores.length).toFixed(1);
+            document.getElementById('home-avg-score').innerText = `${avg}%`;
+        }
+
+        function deleteMockScore(index) {
+            appState.mockScores.splice(index, 1);
+            saveAppState();
+            renderMockScores();
+        }
+
+        // Food for the Soul Render
+        function renderVerses() {
+            const container = document.getElementById('verses-container');
+            container.innerHTML = '';
+
+            bibleVerses.forEach(verse => {
+                container.innerHTML += `
+                    <div class="bg-blush/30 p-5 rounded-2xl border border-softpink/40 flex flex-col justify-between hover:border-deeppink transition-all">
+                        <p class="text-sm italic text-textdark/90 mb-4 leading-relaxed">"${verse.text}"</p>
+                        <span class="text-xs font-bold text-deeppink bg-white px-3 py-1 rounded-full self-start shadow-sm">${verse.ref}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // Home Stats Initializer
+        function updateHomeStats() {
+            let totalHoursAll = 0;
+            Object.values(appState.studyHoursLogs).forEach(h => totalHoursAll += h);
+            document.getElementById('home-total-hours').innerText = `${totalHoursAll.toFixed(1)} hrs`;
+
+            if (appState.mockScores.length > 0) {
+                let totalPercent = 0;
+                appState.mockScores.forEach(s => totalPercent += parseFloat(s.percentage));
+                const avg = (totalPercent / appState.mockScores.length).toFixed(1);
+                document.getElementById('home-avg-score').innerText = `${avg}%`;
+            } else {
+                document.getElementById('home-avg-score').innerText = '0%';
+            }
+        }
+
+        // Initialize App on Load
+        window.onload = function() {
+            loadAppState();
+            updateHomeStats();
+            navigateTo('home');
+        };
+    </script>
+</body>
+</html>
